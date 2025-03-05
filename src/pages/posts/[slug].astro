@@ -1,0 +1,49 @@
+---
+import "../../styles/global.css";
+import { getCollection } from 'astro:content';
+import { marked } from 'marked'; // Import the Markdown processor
+
+// Define static paths for dynamic post pages
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+// Get post data from props
+const { post } = Astro.props;
+const postHTML = post.body ? marked(post.body) : ""; // ✅ Prevents errors if post.body is undefined
+---
+
+<html>
+  <head>
+    <title>{post.data.title}</title> <!-- ✅ Title in <head>, NOT <h1> -->
+  </head>
+  <body class="post-page">
+       <!-- ✅ Added Header -->
+       <header>
+        <img src="/logo1.png" alt="Obscurepedia Logo" width="350"> <!-- ✅ Fixed logo size -->
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/posts">Posts</a></li>
+            <li><a href="/categories">Categories</a></li>
+          </ul>
+        </nav>
+      </header>
+
+    <article class="post-container">
+      <h1 class="post-title">{post.data.title}</h1> <!-- ✅ Properly Styled -->
+      <p class="post-date">Published on: {new Date(post.data.date).toLocaleDateString()}</p>
+
+      {post.data.featured_image && (
+        <img src={post.data.featured_image} alt={post.data.title} class="featured-image" />
+      )}
+
+      <!-- Render converted Markdown as HTML -->
+      <div class="post-content" set:html={postHTML}></div>
+    </article>
+  </body>
+</html>

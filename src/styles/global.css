@@ -1,0 +1,320 @@
+/* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  background-color: #f7f7f7;
+}
+
+/* Header Styles (Global) */
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header img {
+  max-width: 350px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin: 0 15px;
+}
+
+nav ul li a {
+  color: black;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Homepage Grid Layout (Scoped to Homepage) */
+.homepage .post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjusted for responsiveness */
+  gap: 45px;
+  max-width: 1200px; /* Adjusted width for better spacing */
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.homepage .post-grid article {
+  background: #f0f3ff; /* Soft bluish background */
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 350px; /* Ensure a good balance */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+.homepage .post-grid img {
+  width: 100%;
+  height: 180px; /* Ensure consistent height */
+  max-width: 100%; /* Ensure the image never exceeds the container */
+  object-fit: cover;
+  border-radius: 0;
+  display: block; /* Prevent inline spacing issues */
+  overflow: hidden; /* Ensures the image is clipped inside the box */
+}
+
+.homepage .post-grid h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4a0080;
+  margin: 10px 0;
+}
+
+/* Post Page Styling (Scoped to Post Pages) */
+.post-page .post-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  text-align: left;
+}
+
+.post-page .featured-image {
+  width: 100%; /* Set a reasonable width */
+  max-width: 800px; /* Prevents overflow on small screens */
+  max-height: 400px; /* Limits height */
+  object-fit: cover; /* Ensures proper cropping */
+  border-radius: 8px; /* Optional: Soft corners */
+  display: block; /* Ensures no extra spacing */
+  margin: 20px auto; /* Centers the image */
+}
+
+.post-page .post-date {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.post-page .post-content img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+
+.post-page .post-content p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.post-page .post-content blockquote {
+  font-style: italic;
+  border-left: 4px solid #4a0080;
+  padding-left: 15px;
+  color: #4a0080;
+}
+
+h1.post-title {
+  text-align: center !important;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  width: 100%;
+  display: block;
+}
+
+.post-page .post-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.post-page .post-date {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 15px;
+  display: block; /* Ensures it behaves like a block element */
+}
+
+
+/* Responsive Adjustments for Homepage */
+@media (max-width: 1024px) {
+.homepage .post-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+}
+}
+
+@media (max-width: 768px) {
+.homepage .post-grid {
+    grid-template-columns: 1fr; /* 1 column on mobile */
+}
+}
+
+/* Posts Page Styling (Scoped to Posts Page) */
+.posts-page .page-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.posts-page .post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 45px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.posts-page .post-grid article {
+  background: #f0f3ff;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.posts-page .post-grid img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.posts-page .post-grid h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4a0080;
+  margin: 10px 0;
+}
+
+/* Categories Page Styling (Scoped to Categories Page) */
+.categories-page .page-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.categories-page .category-section {
+  margin: 40px auto;
+  max-width: 800px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.categories-page .category-section h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.categories-page .category-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.categories-page .category-section li {
+  margin-bottom: 10px;
+}
+
+.categories-page .category-section a {
+  text-decoration: none;
+  color: #4a0080;
+  font-size: 1.2rem;
+}
+
+.homepage .featured-post {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto 40px;
+}
+
+.homepage .featured-post img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  margin-bottom: 25px; /* Add space below image */
+}
+
+.homepage .featured-post h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4a0080;
+  margin-top: 10px;
+}
+
+.homepage .recent-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 30px;
+}
+
+.homepage .see-all {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.homepage .see-all a {
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #4a0080;
+}
+
+.homepage .featured-excerpt {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto 15px; /* Add space below excerpt */
+  text-align: center;
+}
+
+.read-more {
+  display: block;
+  text-align: center;
+  max-width: fit-content;
+  margin: 0 auto;
+}
+
+/* ✅ General Button Styles */
+.btn {
+  display: inline-block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+  background-color: #4a0080;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+/* ✅ Hover Effect */
+.btn:hover {
+  background-color: #310061;
+}

@@ -1,0 +1,53 @@
+---
+import "../styles/global.css";
+import { getCollection } from 'astro:content';
+
+// Get all posts and extract categories
+const allPosts = await getCollection('posts');
+const categories = {};
+
+// Group posts by category
+allPosts.forEach((post) => {
+  post.data.categories.forEach((category) => {
+    if (!categories[category]) {
+      categories[category] = [];
+    }
+    categories[category].push(post);
+  });
+});
+---
+
+<html>
+  <head>
+    <title>Categories</title>
+  </head>
+  <body class="categories-page"> <!-- ✅ Scoped class added -->
+    <header>
+      <img src="/logo1.png" alt="Obscurepedia Logo" width="350">
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/posts">Posts</a></li>
+          <li><a href="/categories">Categories</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <h1 class="page-title">Categories</h1>
+
+      {Object.entries(categories).map(([category, posts]) => (
+        <section class="category-section">
+          <h2>{category}</h2>
+          <ul>
+            {posts.map((post) => (
+              <li>
+                <a href={`/posts/${post.slug}/`}>{post.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+  </body>
+</html>

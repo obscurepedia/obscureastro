@@ -1,0 +1,40 @@
+---
+import "../styles/global.css";
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts');
+const posts = allPosts.filter((post) => !post.data.draft); // Exclude drafts
+---
+
+<html>
+  <head>
+    <title>All Posts</title>
+  </head>
+  <body class="posts-page"> <!-- ✅ Scoped class added -->
+    <header>
+      <img src="/logo1.png" alt="Obscurepedia Logo" width="350">
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/posts">Posts</a></li>
+          <li><a href="/categories">Categories</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <h1 class="page-title">All Posts</h1>
+
+      <div class="post-grid">
+        {posts.map((post) => (
+          <article>
+            <a href={`/posts/${post.slug}/`}>
+              <img src={post.data.image} alt={post.data.title} />
+              <h2>{post.data.title}</h2>
+            </a>
+          </article>
+        ))}
+      </div>
+    </main>
+  </body>
+</html>

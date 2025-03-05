@@ -1,11 +1,61 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import "../styles/global.css";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Get all posts and sort them by date (newest first)
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts
+  .filter((post) => !post.data.draft) // Exclude drafts
+  .sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
+
+const featuredPost = sortedPosts[0]; // ✅ Latest post as the featured post
+const recentPosts = sortedPosts.slice(1, 7); // ✅ Next 6 most recent posts
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html>
+  <head>
+    <title>Welcome to Obscurepedia</title>
+  </head>
+  <body class="homepage"> <!-- ✅ Scoped CSS for homepage -->
+    <header>
+      <img src="/logo1.png" alt="Obscurepedia Logo" width="350">
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/posts">All Posts</a></li>
+          <li><a href="/categories">Categories</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <h1 class="homepage-title">Featured Article</h1>
+
+      <section class="featured-post">
+        <a href={`/posts/${featuredPost.slug}/`}>
+          <img src={featuredPost.data.image} alt={featuredPost.data.title} />
+        </a>
+        <p class="featured-excerpt">{featuredPost.data.excerpt}</p> <!-- ✅ Show short excerpt -->
+        <a href={`/posts/${featuredPost.slug}/`} class="btn read-more">Read More</a>
+      </section>
+      
+
+      <h2 class="recent-title">Recent Articles</h2>
+
+      <div class="post-grid">
+        {recentPosts.map((post) => (
+          <article>
+            <a href={`/posts/${post.slug}/`}>
+              <img src={post.data.image} alt={post.data.title} />
+              <h2>{post.data.title}</h2>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <div class="see-all">
+        <a href="/posts" class="btn">See All Posts</a>
+      </div>
+    </main>
+  </body>
+</html>

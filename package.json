@@ -9,6 +9,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.4.2"
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/markdown-remark": "^6.2.0",
+    "astro": "^5.4.2",
+    "marked": "^15.0.7",
+    "remark-images": "^4.1.0",
+    "typescript": "^5.8.2"
   }
 }
