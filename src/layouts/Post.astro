@@ -1,0 +1,48 @@
+---
+import { marked } from 'marked';
+import "../../styles/global.css";
+
+export interface PostProps {
+  data: {
+    title: string;
+    date: string;
+    excerpt?: string;
+    featured_image?: string;
+  };
+  body: string;
+}
+
+// ✅ Assign `post` from Astro.props
+const post = Astro.props.post as PostProps;
+const postHTML = post.body ? marked(post.body) : "";
+---
+
+<html>
+  <head>
+    <title>{post.data.title}</title>
+    <meta name="description" content={post.data.excerpt || "An article from Obscurepedia"} />
+  </head>
+  <body class="post-page">
+    <header>
+      <img src="/logo1.png" alt="Obscurepedia Logo" width="350">
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/posts">Posts</a></li>
+          <li><a href="/categories">Categories</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <article class="post-container">
+      <h1 class="post-title">{post.data.title}</h1>
+      <p class="post-date">Published on: {new Date(post.data.date).toLocaleDateString()}</p>
+
+      {post.data.featured_image && (
+        <img src={post.data.featured_image} alt={post.data.title} class="featured-image" />
+      )}
+
+      <div class="post-content" set:html={postHTML}></div>
+    </article>
+  </body>
+</html>
