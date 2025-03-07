@@ -267,6 +267,8 @@ h1.post-title {
   margin-top: 10px;
 }
 
+/* Force Git to track this file */
+
 .homepage .recent-title {
   text-align: center;
   font-size: 2rem;
