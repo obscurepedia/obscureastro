@@ -46,7 +46,7 @@ const recentPosts = sortedPosts.slice(1, 7); // ✅ Next 6 most recent posts
         {recentPosts.map((post) => (
           <article>
             <a href={`/posts/${post.slug}/`}>
-              <img src={post.data.image} alt={post.data.title} />
+              <img src={post.data.featured_image} alt={post.data.title} />
               <h2>{post.data.title}</h2>
             </a>
           </article>

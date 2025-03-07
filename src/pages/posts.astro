@@ -29,7 +29,7 @@ const posts = allPosts.filter((post) => !post.data.draft); // Exclude drafts
         {posts.map((post) => (
           <article>
             <a href={`/posts/${post.slug}/`}>
-              <img src={post.data.image} alt={post.data.title} />
+              <img src={post.data.featured_image} alt={post.data.title} />
               <h2>{post.data.title}</h2>
             </a>
           </article>
