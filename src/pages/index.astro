@@ -33,7 +33,7 @@ const recentPosts = sortedPosts.slice(1, 7); // ✅ Next 6 most recent posts
 
       <section class="featured-post">
         <a href={`/posts/${featuredPost.slug}/`}>
-          <img src={featuredPost.data.image} alt={featuredPost.data.title} />
+          <img src={featuredPost.data.featured_image} alt={featuredPost.data.title} />
         </a>
         <p class="featured-excerpt">{featuredPost.data.excerpt}</p> <!-- ✅ Show short excerpt -->
         <a href={`/posts/${featuredPost.slug}/`} class="btn read-more">Read More</a>
