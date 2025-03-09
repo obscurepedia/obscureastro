@@ -1,9 +1,11 @@
 ---
-import { marked } from "marked";
+import { marked } from 'marked';
 import "../styles/global.css";
+import { getRecentFacebookPost } from '../lib/database'; // ✅ Import database function
 
 export interface PostProps {
   data: {
+    id: number;
     title: string;
     date: string;
     excerpt?: string;
@@ -12,10 +14,13 @@ export interface PostProps {
   body: string;
 }
 
-// ✅ Assign `post` from Astro.props
+// ✅ Fetch the most recent Facebook post URL for this blog post
+const facebook_post_url = await getRecentFacebookPost(Astro.props.post.data.id);
+
 const post = Astro.props.post as PostProps;
 const postHTML = post.body ? marked(post.body) : "";
 ---
+
 
 <html>
   <head>
@@ -43,6 +48,15 @@ const postHTML = post.body ? marked(post.body) : "";
       )}
 
       <div class="post-content" set:html={postHTML}></div>
+      {facebook_post_url && (
+        <div class="facebook-comment-section">
+          <p>💬 Join the discussion on Facebook:</p>
+          <a href={facebook_post_url} target="_blank" rel="noopener noreferrer" class="facebook-btn">
+            Comment on Facebook
+          </a>
+        </div>
+      )}
+      
     </article>
 
     <!-- ✅ Added Footer Here Without Changing Layout -->
