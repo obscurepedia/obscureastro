@@ -1,5 +1,5 @@
 ---
-import { marked } from 'marked';
+import { marked } from "marked";
 import "../styles/global.css";
 
 export interface PostProps {
@@ -44,5 +44,15 @@ const postHTML = post.body ? marked(post.body) : "";
 
       <div class="post-content" set:html={postHTML}></div>
     </article>
+
+    <!-- ✅ Added Footer Here Without Changing Layout -->
+    <footer>
+      <nav>
+        <ul>
+          <li><a href="/privacy-policy/">Privacy Policy</a></li>
+          <li><a href="/terms-of-service/">Terms of Service</a></li>
+        </ul>
+      </nav>
+    </footer>
   </body>
 </html>

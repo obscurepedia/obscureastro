@@ -1,16 +1,14 @@
 ---
 import "/src/styles/global.css";
 import { getCollection } from 'astro:content';
+import Layout from "../layouts/Layout.astro"; // ✅ Import Layout
 
 const allPosts = await getCollection('posts');
-const posts = allPosts.filter((post) => !post.data.draft); // Exclude drafts
+const posts = allPosts.filter((post) => !post.data.draft); // ✅ Exclude drafts
 ---
 
-<html>
-  <head>
-    <title>All Posts</title>
-  </head>
-  <body class="posts-page"> <!-- ✅ Scoped class added -->
+<Layout>
+  <main class="posts-page"> <!-- ✅ Keeps grid styling intact -->
     <header>
       <img src="/logo1.png" alt="Obscurepedia Logo" width="350">
       <nav>
@@ -22,19 +20,17 @@ const posts = allPosts.filter((post) => !post.data.draft); // Exclude drafts
       </nav>
     </header>
 
-    <main>
-      <h1 class="page-title">All Posts</h1>
+    <h1 class="page-title">All Posts</h1>
 
-      <div class="post-grid">
-        {posts.map((post) => (
-          <article>
-            <a href={`/posts/${post.slug}/`}>
-              <img src={post.data.featured_image} alt={post.data.title} />
-              <h2>{post.data.title}</h2>
-            </a>
-          </article>
-        ))}
-      </div>
-    </main>
-  </body>
-</html>
+    <div class="post-grid">
+      {posts.map((post) => (
+        <article>
+          <a href={`/posts/${post.slug}/`}>
+            <img src={post.data.featured_image} alt={post.data.title} />
+            <h2>{post.data.title}</h2>
+          </a>
+        </article>
+      ))}
+    </div>
+  </main>
+</Layout>

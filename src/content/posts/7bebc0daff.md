@@ -3,7 +3,7 @@
 ---
 title: "Unleash Your Mind: It Can Generate More Ideas Than Atoms in the Universe!"
 date: "2025-03-02"
-image: "/images/7bebc0daff-0.jpg"
+featured_image: "/images/7bebc0daff-0.jpg"
 categories:
   - Science
 subcategories:
@@ -11,8 +11,6 @@ subcategories:
 draft: false
 ---
 
-
-![Featured Image](/images/7bebc0daff-0.jpg)
 
 Imagine having the potential to generate more ideas than there are atoms in the Universe.  
 

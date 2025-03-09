@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const { title, excerpt, featured_image } = Astro.props;
+---
+
+<Layout title={title}>
+  <article class="max-w-3xl mx-auto px-4 py-8">
+    {featured_image && (
+      <img src={featured_image} class="rounded-lg mb-6" alt={title} />
+    )}
+    <h1 class="text-3xl font-bold mb-4">{title}</h1>
+    {excerpt && <p class="text-lg italic mb-4">{excerpt}</p>}
+    <slot />
+  </article>
+</Layout>
