@@ -1,12 +1,15 @@
-import { sql } from 'astro:db';
-
 export async function getRecentFacebookPost(postId) {
-  const result = await sql`
-    SELECT article_url FROM facebook_posts
-    WHERE generated_post_id = ${postId}
-    ORDER BY last_posted DESC
-    LIMIT 1;
-  `;
+  try {
+    const response = await fetch(`http://127.0.0.1:5001/api/get_recent_facebook_post?post_id=${postId}`);
+    const data = await response.json();
 
-  return result.length > 0 ? result[0].article_url : null;
+    if (data.article_url) {
+      return data.article_url;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Error fetching Facebook post URL:", error);
+    return null;
+  }
 }
