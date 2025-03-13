@@ -13,6 +13,7 @@
     "@astrojs/markdown-remark": "^6.2.0",
     "astro": "^5.4.2",
     "marked": "^15.0.7",
+    "pg": "^8.14.0",
     "remark-images": "^4.1.0",
     "typescript": "^5.8.2"
   }

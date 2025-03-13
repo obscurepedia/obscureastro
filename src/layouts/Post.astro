@@ -15,12 +15,25 @@ export interface PostProps {
 }
 
 // ✅ Fetch the most recent Facebook post URL for this blog post
-const facebook_post_url = await getRecentFacebookPost(Astro.props.post.data.id);
+const postId = Astro.props.post?.data?.id || null;
+console.log("📌 Debug: Astro.props.post:", Astro.props.post);
+let facebook_post_url = null; // Initialize variable
+
+// ✅ Use an async function to fetch the Facebook post URL
+async function fetchFacebookPostUrl() {
+  if (postId) {
+    facebook_post_url = await getRecentFacebookPost(postId);
+    console.log("📌 Debug: Facebook Post URL:", facebook_post_url);
+  } else {
+    console.warn("⚠️ Warning: postId is undefined. Facebook post URL will not be fetched.");
+  }
+}
+
+await fetchFacebookPostUrl(); // ✅ Execute the function
 
 const post = Astro.props.post as PostProps;
 const postHTML = post.body ? marked(post.body) : "";
 ---
-
 
 <html>
   <head>
@@ -48,6 +61,7 @@ const postHTML = post.body ? marked(post.body) : "";
       )}
 
       <div class="post-content" set:html={postHTML}></div>
+
       {facebook_post_url && (
         <div class="facebook-comment-section">
           <p>💬 Join the discussion on Facebook:</p>

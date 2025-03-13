@@ -1,6 +1,7 @@
 ---
 import PostLayout from "../../layouts/Post.astro";
 import { getCollection } from 'astro:content';
+import { getDatabasePostId } from '../../lib/database';
 
 // ✅ Fetch all blog posts
 export async function getStaticPaths() {
@@ -13,6 +14,40 @@ export async function getStaticPaths() {
 
 // ✅ Pass post data to the layout
 const { post } = Astro.props;
+
+// ✅ Extract filename from post ID (remove `.md`)
+const postFilename = post.id.replace('.md', ''); 
+
+// ✅ Get the correct postId from the database using the filename
+const postId = await getDatabasePostId(postFilename);
+
+if (!postId) {
+  console.warn("⚠️ Warning: Could not find postId for filename:", postFilename);
+}
+
+// ✅ Debugging log
+console.log("📌 Debug: Retrieved postId from database:", postId);
+
+// ✅ Fetch Facebook post URL based on the retrieved postId
+const article_url = postId ? `/api/get_recent_facebook_post?post_id=${postId}` : null;
 ---
 
 <PostLayout post={post} />
+
+{article_url && (
+  <div style="text-align: center; margin-top: 40px;">
+    <h3>Join the Discussion!</h3>
+    <p>Drop your thoughts in the comments below and let's discuss the future of human longevity! 🚀🔬💬</p>
+
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous"
+      src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v12.0">
+    </script>
+
+    <div class="fb-comments" 
+         data-href={article_url} 
+         data-width="100%" 
+         data-numposts="5">
+    </div>
+  </div>
+)}
