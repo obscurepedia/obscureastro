@@ -1,22 +1,25 @@
-import pkg from "pg"; // ✅ Correct way to import 'pg' in ES modules
+import pkg from "pg";
+import dotenv from "dotenv";
+
+dotenv.config(); // <-- Loads variables from .env
 const { Pool } = pkg;
 
-
+// Create a new Pool using environment variables
 const pool = new Pool({
-    user: "yitzchok",
-    host: "obscurepedia-db.c9qi6qoiyq1t.us-east-1.rds.amazonaws.com",
-    database: "obscurepedia",
-    password: "X4l87gDovMeSlsPWKOtJ",
-    port: 5432,
-    ssl: { rejectUnauthorized: false } // ✅ Ensures connection works with AWS RDS
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: process.env.DB_PORT, // Typically 5432
+  ssl: { rejectUnauthorized: false },
 });
 
 export async function queryDatabase(query, params) {
-    const client = await pool.connect();
-    try {
-        const result = await client.query(query, params);
-        return result;
-    } finally {
-        client.release();
-    }
+  const client = await pool.connect();
+  try {
+    const result = await client.query(query, params);
+    return result;
+  } finally {
+    client.release();
+  }
 }
