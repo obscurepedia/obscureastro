@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/markdown-remark": "^6.2.0",
-    "astro": "^5.4.2",
+    "@astrojs/markdown-remark": "^6.3.0",
+    "astro": "^5.5.2",
     "dotenv": "^16.4.7",
     "marked": "^15.0.7",
     "pg": "^8.14.0",

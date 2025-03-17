@@ -1,38 +1,25 @@
-import { queryDatabase } from "./db"; // ✅ Ensure database connection is imported
+import pkg from "pg";
+import dotenv from "dotenv";
 
-export async function getDatabasePostId(filename) {
-    try {
-        console.log("📌 Debug: Querying database for filename:", filename);
-        
-        const result = await queryDatabase(
-            `SELECT id FROM generated_posts WHERE filename = $1 LIMIT 1;`, 
-            [filename] // ✅ Ensure we search by filename, not slug
-        );
+dotenv.config(); // <-- Loads variables from .env
+const { Pool } = pkg;
 
-        console.log("📌 Debug: Query result:", result.rows);
+// Create a new Pool using environment variables
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: process.env.DB_PORT, // Typically 5432
+  ssl: { rejectUnauthorized: false },
+});
 
-        return result.rows.length ? result.rows[0].id : null;
-    } catch (error) {
-        console.error("❌ Error fetching post ID from database:", error);
-        return null;
-    }
-}
-
-
-
-
-export async function getRecentFacebookPost(postId) {
+export async function queryDatabase(query, params) {
+  const client = await pool.connect();
   try {
-    const response = await fetch(`http://127.0.0.1:5001/api/get_recent_facebook_post?post_id=${postId}`);
-    const data = await response.json();
-
-    if (data.article_url) {
-      return data.article_url;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("❌ Error fetching Facebook post URL:", error);
-    return null;
+    const result = await client.query(query, params);
+    return result;
+  } finally {
+    client.release();
   }
 }

@@ -1,53 +1,55 @@
 ---
 import PostLayout from "../../layouts/Post.astro";
 import { getCollection } from 'astro:content';
-import { getDatabasePostId } from '../../lib/database';
+import { marked } from 'marked';
 
-// ✅ Fetch all blog posts
+// ✅ Fetch all posts to generate dynamic paths
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
+
+  // Generate paths for each post slug
   return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
+    params: { slug: post.slug }, // `slug` will be the dynamic part of the URL
   }));
 }
 
-// ✅ Pass post data to the layout
-const { post } = Astro.props;
+// ✅ Fetch the current post based on the `slug` parameter from the URL
+const { slug } = Astro.params; // Access the dynamic `slug`
+const post = await getCollection('posts').then((posts) =>
+  posts.find((p) => p.slug === slug)
+);
 
-// ✅ Extract filename from post ID (remove `.md`)
-const postFilename = post.id.replace('.md', ''); 
+const postHTML = post.body ? marked(post.body) : ""; // Convert markdown to HTML
 
-// ✅ Get the correct postId from the database using the filename
-const postId = await getDatabasePostId(postFilename);
+// ✅ Fetch the Facebook post URL based on the post's ID (or filename)
+let articleUrl = '';
+const baseUrl = process.env.BASE_URL || 'http://localhost:4321'; // Default to localhost for local development
 
-if (!postId) {
-  console.warn("⚠️ Warning: Could not find postId for filename:", postFilename);
+try {
+  // Fetch the URL of the Facebook post from the API, using the full URL
+  const response = await fetch(`${baseUrl}/api/get_facebook_post_url?generated_post_id=${post.id.replace('.md', '')}`);
+  const data = await response.json();
+  articleUrl = data.article_url; // If we get the article URL from the API
+} catch (error) {
+  console.warn("❌ Error fetching Facebook Post URL:", error);
 }
-
-// ✅ Debugging log
-console.log("📌 Debug: Retrieved postId from database:", postId);
-
-// ✅ Fetch Facebook post URL based on the retrieved postId
-const article_url = postId ? `/api/get_recent_facebook_post?post_id=${postId}` : null;
 ---
 
 <PostLayout post={post} />
 
-{article_url && (
+{/* If the articleUrl is available, display the button */}
+{articleUrl && (
   <div style="text-align: center; margin-top: 40px;">
     <h3>Join the Discussion!</h3>
-    <p>Drop your thoughts in the comments below and let's discuss the future of human longevity! 🚀🔬💬</p>
+    <p>Have thoughts to share? Click the button below to head to our Facebook post and join the conversation! 🚀💬</p>
 
-    <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous"
-      src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v12.0">
-    </script>
-
-    <div class="fb-comments" 
-         data-href={article_url} 
-         data-width="100%" 
-         data-numposts="5">
+    {/* Button to Facebook post for commenting */}
+    <div style="margin-bottom: 20px;">
+      <a href={articleUrl} target="_blank" rel="noopener noreferrer">
+        <button style="padding: 10px 20px; font-size: 16px; background-color: #3b5998; color: white; border: none; border-radius: 5px;">
+          Comment on Facebook
+        </button>
+      </a>
     </div>
   </div>
 )}

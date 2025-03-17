@@ -1,29 +1,27 @@
 ---
 import { marked } from 'marked';
 import "../styles/global.css";
-import { getRecentFacebookPost } from '../lib/database'; // ✅ Import database function
-
-export interface PostProps {
-  data: {
-    id: number;
-    title: string;
-    date: string;
-    excerpt?: string;
-    featured_image?: string;
-  };
-  body: string;
-}
 
 // ✅ Fetch the most recent Facebook post URL for this blog post
 const postId = Astro.props.post?.data?.id || null;
 console.log("📌 Debug: Astro.props.post:", Astro.props.post);
 let facebook_post_url = null; // Initialize variable
 
-// ✅ Use an async function to fetch the Facebook post URL
+// ✅ Use an async function to fetch the Facebook post URL via the API
 async function fetchFacebookPostUrl() {
   if (postId) {
-    facebook_post_url = await getRecentFacebookPost(postId);
-    console.log("📌 Debug: Facebook Post URL:", facebook_post_url);
+    try {
+      const response = await fetch(`/api/get_facebook_post_url?generated_post_id=${postId}`);
+      const data = await response.json();
+      if (data.article_url) {
+        facebook_post_url = data.article_url;
+        console.log("📌 Debug: Facebook Post URL:", facebook_post_url);
+      } else {
+        console.warn("⚠️ Warning: Facebook post URL not found.");
+      }
+    } catch (error) {
+      console.error("❌ Error fetching Facebook Post URL:", error);
+    }
   } else {
     console.warn("⚠️ Warning: postId is undefined. Facebook post URL will not be fetched.");
   }
@@ -31,7 +29,7 @@ async function fetchFacebookPostUrl() {
 
 await fetchFacebookPostUrl(); // ✅ Execute the function
 
-const post = Astro.props.post as PostProps;
+const post = Astro.props.post;
 const postHTML = post.body ? marked(post.body) : "";
 ---
 
@@ -62,6 +60,7 @@ const postHTML = post.body ? marked(post.body) : "";
 
       <div class="post-content" set:html={postHTML}></div>
 
+      {/* ✅ Use Astro's conditional rendering syntax */}
       {facebook_post_url && (
         <div class="facebook-comment-section">
           <p>💬 Join the discussion on Facebook:</p>
