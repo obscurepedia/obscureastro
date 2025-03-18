@@ -1,24 +1,22 @@
-import pkg from "pg";
-import dotenv from "dotenv";
-
-dotenv.config(); // <-- Loads variables from .env
+import pkg from 'pg';
 const { Pool } = pkg;
 
-// Create a new Pool using environment variables
 const pool = new Pool({
-  user: process.env.DB_USER,
   host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
   password: process.env.DB_PASS,
-  port: process.env.DB_PORT, // Typically 5432
-  ssl: { rejectUnauthorized: false },
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false // Important for AWS RDS
+  }
 });
 
 export async function queryDatabase(query, params) {
   const client = await pool.connect();
   try {
-    const result = await client.query(query, params);
-    return result;
+    const res = await client.query(query, params);
+    return res;
   } finally {
     client.release();
   }
