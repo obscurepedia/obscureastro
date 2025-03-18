@@ -2,34 +2,10 @@
 import { marked } from 'marked';
 import "../styles/global.css";
 
-// ✅ Fetch the most recent Facebook post URL for this blog post
-const postId = Astro.props.post?.data?.id || null;
-console.log("📌 Debug: Astro.props.post:", Astro.props.post);
-let facebook_post_url = null; // Initialize variable
-
-// ✅ Use an async function to fetch the Facebook post URL via the API
-async function fetchFacebookPostUrl() {
-  if (postId) {
-    try {
-      const response = await fetch(`/api/get_facebook_post_url?generated_post_id=${postId}`);
-      const data = await response.json();
-      if (data.article_url) {
-        facebook_post_url = data.article_url;
-        console.log("📌 Debug: Facebook Post URL:", facebook_post_url);
-      } else {
-        console.warn("⚠️ Warning: Facebook post URL not found.");
-      }
-    } catch (error) {
-      console.error("❌ Error fetching Facebook Post URL:", error);
-    }
-  } else {
-    console.warn("⚠️ Warning: postId is undefined. Facebook post URL will not be fetched.");
-  }
-}
-
-await fetchFacebookPostUrl(); // ✅ Execute the function
-
 const post = Astro.props.post;
+console.log("📌 Debug: Astro.props.post:", post);
+
+// ✅ Convert Markdown body to HTML
 const postHTML = post.body ? marked(post.body) : "";
 ---
 
@@ -52,27 +28,29 @@ const postHTML = post.body ? marked(post.body) : "";
 
     <article class="post-container">
       <h1 class="post-title">{post.data.title}</h1>
-      <p class="post-date">Published on: {new Date(post.data.date).toLocaleDateString()}</p>
+      <p class="post-date">
+        Published on: {new Date(post.data.date).toLocaleDateString()}
+      </p>
 
       {post.data.featured_image && (
-        <img src={post.data.featured_image} alt={post.data.title} class="featured-image" />
+        <img
+          src={post.data.featured_image}
+          alt={post.data.title}
+          class="featured-image"
+        />
       )}
 
+      {/* ✅ Render the Markdown content as HTML */}
       <div class="post-content" set:html={postHTML}></div>
 
-      {/* ✅ Use Astro's conditional rendering syntax */}
-      {facebook_post_url && (
-        <div class="facebook-comment-section">
-          <p>💬 Join the discussion on Facebook:</p>
-          <a href={facebook_post_url} target="_blank" rel="noopener noreferrer" class="facebook-btn">
-            Comment on Facebook
-          </a>
-        </div>
-      )}
-      
+      {/* 
+        ✅ A <slot/> for child content passed from [slug].astro.
+        If [slug].astro includes the “Join the Discussion!” button,
+        it will render here.
+      */}
+      <slot />
     </article>
 
-    <!-- ✅ Added Footer Here Without Changing Layout -->
     <footer>
       <nav>
         <ul>

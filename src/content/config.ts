@@ -1,6 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 
 const postsCollection = defineCollection({
+  type: 'content',  // Explicitly define this
   schema: z.object({
     title: z.string(),
     image: z.string().optional(), // 🔹 Now image is optional

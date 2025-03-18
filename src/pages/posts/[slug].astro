@@ -1,55 +1,88 @@
 ---
 import PostLayout from "../../layouts/Post.astro";
-import { getCollection } from 'astro:content';
-import { marked } from 'marked';
+import { getCollection } from "astro:content";
+import { marked } from "marked";
+import { queryDatabase } from "../../lib/database";
 
-// ✅ Fetch all posts to generate dynamic paths
+// ✅ 1. Generate dynamic paths for all posts
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
-
-  // Generate paths for each post slug
+  const posts = await getCollection("posts");
   return posts.map((post) => ({
-    params: { slug: post.slug }, // `slug` will be the dynamic part of the URL
+    params: { slug: post.slug },
   }));
 }
 
-// ✅ Fetch the current post based on the `slug` parameter from the URL
-const { slug } = Astro.params; // Access the dynamic `slug`
-const post = await getCollection('posts').then((posts) =>
-  posts.find((p) => p.slug === slug)
-);
+// ✅ 2. Get the `slug` from the URL and fetch the matching markdown post
+const { slug } = Astro.params;
+const posts = await getCollection("posts");
+const post = posts.find((p) => p.slug === slug);
 
-const postHTML = post.body ? marked(post.body) : ""; // Convert markdown to HTML
+if (!post) {
+  throw new Error(`❌ Post not found for slug: ${slug}`);
+}
 
-// ✅ Fetch the Facebook post URL based on the post's ID (or filename)
-let articleUrl = '';
-const baseUrl = process.env.BASE_URL || 'http://localhost:4321'; // Default to localhost for local development
+// ✅ 3. Convert the post body to HTML (markdown → HTML)
+const postHTML = post.body ? marked(post.body) : "";
 
+// ✅ 4. Derive `filenameShort` from the slug (remove ".md" if present)
+const filenameShort = slug.replace(".md", "");
+console.log("filenameShort derived from slug:", filenameShort);
+
+// We'll store the final Facebook post URL here
+let articleUrl = "";
+
+// ✅ 5. Perform a database lookup to find the numeric ID that corresponds to `filenameShort`
 try {
-  // Fetch the URL of the Facebook post from the API, using the full URL
-  const response = await fetch(`${baseUrl}/api/get_facebook_post_url?generated_post_id=${post.id.replace('.md', '')}`);
-  const data = await response.json();
-  articleUrl = data.article_url; // If we get the article URL from the API
+  const dbResult = await queryDatabase(
+    "SELECT id FROM generated_posts WHERE filename_short = $1",
+    [filenameShort]
+  );
+
+  if (dbResult.rows.length === 0) {
+    console.warn(`No matching record found in generated_posts for ${filenameShort}`);
+  } else {
+    // ✅ 6. Extract the numeric ID from the database result
+    const numericId = dbResult.rows[0].id;
+    console.log("Database numeric ID:", numericId);
+
+    // ✅ 7. Fetch the Facebook post URL via your API endpoint
+    const baseUrl = process.env.BASE_URL || "http://localhost:4321";
+    const response = await fetch(`${baseUrl}/api/get_facebook_post_url?generated_post_id=${numericId}`);
+    const data = await response.json();
+
+    articleUrl = data.article_url; // If the API returns a valid URL, store it
+    console.log("Fetched articleUrl:", articleUrl);
+  }
 } catch (error) {
-  console.warn("❌ Error fetching Facebook Post URL:", error);
+  console.error("❌ Error during DB lookup or API fetch:", error);
 }
 ---
 
-<PostLayout post={post} />
-
-{/* If the articleUrl is available, display the button */}
-{articleUrl && (
-  <div style="text-align: center; margin-top: 40px;">
-    <h3>Join the Discussion!</h3>
-    <p>Have thoughts to share? Click the button below to head to our Facebook post and join the conversation! 🚀💬</p>
-
-    {/* Button to Facebook post for commenting */}
-    <div style="margin-bottom: 20px;">
-      <a href={articleUrl} target="_blank" rel="noopener noreferrer">
-        <button style="padding: 10px 20px; font-size: 16px; background-color: #3b5998; color: white; border: none; border-radius: 5px;">
-          Comment on Facebook
-        </button>
-      </a>
+<!-- 
+  ✅ 8. Pass the comment box as a child to PostLayout.
+  Make sure PostLayout uses <slot/> in its markup so the
+  button appears within the main content area.
+-->
+<PostLayout post={post}>
+  {articleUrl && (
+    <div style="text-align: center; margin-top: 40px;">
+      
+      <div style="margin-bottom: 20px;">
+        <a href={articleUrl} target="_blank" rel="noopener noreferrer">
+          <button
+            style="
+              padding: 10px 20px; 
+              font-size: 16px; 
+              background-color: #3b5998; 
+              color: white; 
+              border: none; 
+              border-radius: 5px;
+            "
+          >
+            Comment on Facebook
+          </button>
+        </a>
+      </div>
     </div>
-  </div>
-)}
+  )}
+</PostLayout>

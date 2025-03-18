@@ -1,3 +1,4 @@
+export const prerender = false; // 🚨 This makes it a dynamic API route
 import { queryDatabase } from '../../lib/database';
 
 export async function GET({ request }) {
